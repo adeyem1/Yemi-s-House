@@ -121,18 +121,46 @@ const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
 
 // add event to all form input field
-for (let i = 0; i < formInputs.length; i++) {
-  formInputs[i].addEventListener("input", function () {
-
+formInputs.forEach((input) => {
+  input.addEventListener("input", () => {
     // check form validation
     if (form.checkValidity()) {
       formBtn.removeAttribute("disabled");
     } else {
       formBtn.setAttribute("disabled", "");
     }
-
   });
-}
+});
+
+// handle form submission
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  
+  // Get form data
+  const formData = new FormData(form);
+  
+  // Submit form using fetch
+  fetch(form.action, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+  .then(response => {
+    if (response.ok) {
+      // Reset form
+      form.reset();
+      formBtn.setAttribute("disabled", "");
+      alert("Message sent successfully!");
+    } else {
+      throw new Error('Error sending message');
+    }
+  })
+  .catch(error => {
+    alert("Error sending message. Please try again.");
+  });
+});
 
 
 
